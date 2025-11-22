@@ -1,0 +1,6 @@
+@SpenderTracker.API_HostAddress = http://localhost:5108
+
+GET {{SpenderTracker.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
