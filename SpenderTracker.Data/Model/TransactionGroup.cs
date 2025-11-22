@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SpenderTracker.Data.Interface;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SpenderTracker.Data.Model;
 
-public class TransactionGroup
+public class TransactionGroup : IEntity<TransactionGroupDto>
 {
     [Key]
     public int Id { get; set; }
@@ -18,4 +19,13 @@ public class TransactionGroup
 
     [InverseProperty(nameof(Transaction.TransactionGroup))]
     public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
+
+    public TransactionGroupDto ToDto()
+    {
+        return new TransactionGroupDto
+        {
+            Id = this.Id,
+            GroupName = this.GroupName
+        };
+    }
 }

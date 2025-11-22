@@ -1,10 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SpenderTracker.Data.Dto;
+using SpenderTracker.Data.Interface;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SpenderTracker.Data.Model;
 
-public class Transaction
+public class Transaction : IEntity<TransactionDto>
 {
     [Key]
     public int Id { get; set; }
@@ -39,4 +41,18 @@ public class Transaction
     [InverseProperty(nameof(TransactionMethod.Transactions))]
     [ForeignKey(nameof(TransactionMethodId))]
     public virtual TransactionMethod? TransactionMethod { get; set; }
+
+    public TransactionDto ToDto()
+    {
+        return new TransactionDto
+        {
+            Id = this.Id,
+            TransactionTypeId = this.TransactionTypeId,
+            TransactionGroupId = this.TransactionGroupId,
+            TransactionMethodId = this.TransactionMethodId,
+            Amount = this.Amount,
+            Description = this.Description,
+            Timestamp = this.Timestamp
+        };
+    }
 }

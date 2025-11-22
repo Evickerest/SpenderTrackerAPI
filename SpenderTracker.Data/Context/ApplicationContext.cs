@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SpenderTracker.Data.Model;
 
-namespace SpenderTracker.Data.Data; 
+namespace SpenderTracker.Data.Context;
 
 public class ApplicationContext : DbContext
 {
