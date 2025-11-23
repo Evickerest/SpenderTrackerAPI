@@ -1,13 +1,6 @@
-import { platformBrowser, BrowserModule, bootstrapApplication } from '@angular/platform-browser';
-
-import { provideBrowserGlobalErrorListeners, importProvidersFrom } from '@angular/core';
-import { AppRoutingModule } from './app/app-routing-module';
+import { bootstrapApplication } from '@angular/platform-browser';
 import { App } from './app/app';
+import { appConfig } from './app/app.config';
 
-bootstrapApplication(App, {
-    providers: [
-        importProvidersFrom(BrowserModule, AppRoutingModule),
-        provideBrowserGlobalErrorListeners()
-    ]
-})
-  .catch(err => console.error(err));
+bootstrapApplication(App, appConfig)
+    .catch((err) => console.log(err));
