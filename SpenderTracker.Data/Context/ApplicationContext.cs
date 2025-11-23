@@ -5,6 +5,14 @@ namespace SpenderTracker.Data.Context;
 
 public class ApplicationContext : DbContext
 {
+    public ApplicationContext()
+    {
+    }
+
+    public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
+    {
+    } 
+
     public DbSet<Account> Accounts { get; set; }
     public DbSet<Budget> Budgets { get; set; }
     public DbSet<Transaction> Transactions { get; set; }
@@ -14,8 +22,10 @@ public class ApplicationContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer("data source=MSI\\SQLEXPRESS;initial catalog=master;trusted_connection=true;TrustServerCertificate=true")
-            .EnableDetailedErrors(); 
-    }
-
+        if (!optionsBuilder.IsConfigured)
+        {
+            optionsBuilder.UseSqlServer("data source=MSI\\SQLEXPRESS;Database=SpenderTracker;trusted_connection=true;TrustServerCertificate=true")
+                .EnableDetailedErrors(); 
+        }
+    } 
 }

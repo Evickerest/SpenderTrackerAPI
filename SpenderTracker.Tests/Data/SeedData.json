@@ -1,0 +1,89 @@
+{
+  "Accounts": [
+    { "AccountName": "Checking Account", "Balance": 2500.75 },
+    { "AccountName": "Savings Account", "Balance": 10500.00 },
+    { "AccountName": "Business Account", "Balance": 7800.40 },
+    { "AccountName": "Credit Card", "Balance": -450.20 },
+    { "AccountName": "Emergency Fund", "Balance": 3200.00 }
+  ],
+
+  "Budgets": [
+    { "TransactionGroupId": 1, "GoalAmount": 600.00, "Year": 2025, "Month": 1 },
+    { "TransactionGroupId": 2, "GoalAmount": 300.00, "Year": 2025, "Month": 1 },
+    { "TransactionGroupId": 3, "GoalAmount": 150.00, "Year": 2025, "Month": 1 },
+    { "TransactionGroupId": 4, "GoalAmount": 200.00, "Year": 2025, "Month": 1 },
+    { "TransactionGroupId": null, "GoalAmount": 500.00, "Year": 2025, "Month": 2 }
+  ],
+
+  "TransactionGroups": [
+    { "GroupName": "Groceries" },
+    { "GroupName": "Transportation" },
+    { "GroupName": "Utilities" },
+    { "GroupName": "Entertainment" },
+    { "GroupName": "Dining Out" }
+  ],
+
+  "TransactionTypes": [
+    { "TypeName": "Expense" },
+    { "TypeName": "Income" },
+    { "TypeName": "Transfer" },
+    { "TypeName": "Refund" },
+    { "TypeName": "Fee" }
+  ],
+
+  "TransactionMethods": [
+    { "MethodName": "Debit Card", "AccountId": 1 },
+    { "MethodName": "Bank Transfer", "AccountId": 2 },
+    { "MethodName": "Credit Card", "AccountId": 4 },
+    { "MethodName": "Cash", "AccountId": 3 },
+    { "MethodName": "Mobile Payment", "AccountId": 1 }
+  ],
+
+  "Transactions": [
+    {
+      "TransactionTypeId": 1,
+      "TransactionGroupId": 1,
+      "TransactionMethodId": 1,
+      "Amount": 54.32,
+      "Description": "Grocery run at FreshMart",
+      "Timestamp": "2025-01-05T14:22:00+00:00",
+      "ReceiptImagePath": "/receipts/txn1.jpg"
+    },
+    {
+      "TransactionTypeId": 1,
+      "TransactionGroupId": 2,
+      "TransactionMethodId": 5,
+      "Amount": 23.50,
+      "Description": "Bus pass reload",
+      "Timestamp": "2025-01-06T10:12:00+00:00",
+      "ReceiptImagePath": null
+    },
+    {
+      "TransactionTypeId": 2,
+      "TransactionGroupId": 3,
+      "TransactionMethodId": 2,
+      "Amount": 150.00,
+      "Description": "Utility refund",
+      "Timestamp": "2025-01-07T16:40:00+00:00",
+      "ReceiptImagePath": null
+    },
+    {
+      "TransactionTypeId": 1,
+      "TransactionGroupId": 4,
+      "TransactionMethodId": 3,
+      "Amount": 75.99,
+      "Description": "Movie night",
+      "Timestamp": "2025-01-08T20:15:00+00:00",
+      "ReceiptImagePath": "/receipts/txn4.png"
+    },
+    {
+      "TransactionTypeId": 1,
+      "TransactionGroupId": 5,
+      "TransactionMethodId": 4,
+      "Amount": 32.10,
+      "Description": "Lunch meeting",
+      "Timestamp": "2025-01-09T12:05:00+00:00",
+      "ReceiptImagePath": null
+    }
+  ]
+}
