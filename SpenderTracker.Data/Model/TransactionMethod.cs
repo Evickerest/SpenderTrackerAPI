@@ -19,7 +19,7 @@ public class TransactionMethod : IEntity<TransactionMethodDto>
 
     [InverseProperty(nameof(Model.Account.TransactionMethods))]
     [ForeignKey(nameof(AccountId))]
-    public virtual Account? Account { get; set; } 
+    public virtual Account Account { get; set; } = null!;
 
     [InverseProperty(nameof(Transaction.TransactionMethod))]
     public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();

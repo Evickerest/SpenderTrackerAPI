@@ -1,0 +1,66 @@
+#transactions-wrapper {
+    --border-color: rgba(146, 146, 146, 0.481);
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
+    padding: 2rem;
+}
+
+#add-transaction-button {
+    padding: 1rem;
+    border: 2px solid var(--border-color); 
+    cursor: pointer; 
+}
+
+#add-transaction-button:hover {
+    color: white;
+    background-color: black;
+}
+
+table {
+    border-collapse: collapse;
+    border-left: 2px solid var(--border-color);
+    border-right: 2px solid var(--border-color); 
+}
+
+th {
+    text-align: center;
+    color: white;
+    padding: 1rem;
+}
+
+thead {
+    background: linear-gradient(90deg,rgba(179, 0, 0, 1) 0%, rgba(0, 44, 145, 1) 100%);
+}
+
+td {
+    text-align: center;
+    border-bottom: 2px solid var(--border-color); 
+}
+
+.amount-income {
+    color: green;
+}
+
+.amount-expense {
+    color: red;
+}
+
+.amount-income::before {
+    content: '+'
+}
+
+.buttons-container {
+    display: flex;
+    flex-direction: column;
+    margin-left: 0.5rem;
+}
+
+.buttons-container > button {
+    background-color: none;
+    border-left: 2px solid var(--border-color); 
+    border-right: 2px solid var(--border-color); 
+    border-bottom: 2px solid var(--border-color); 
+    border-top: none;
+    cursor: pointer; 
+}

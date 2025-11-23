@@ -5,4 +5,5 @@ namespace SpenderTracker.Core.Interfaces;
 
 public interface ITransactionService : IBaseService<Transaction, TransactionDto>
 {
+    new List<TransactionListDto> GetAll();
 }

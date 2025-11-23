@@ -32,15 +32,15 @@ public class Transaction : IEntity<TransactionDto>
 
     [InverseProperty(nameof(TransactionType.Transactions))]
     [ForeignKey(nameof(TransactionTypeId))]
-    public virtual TransactionType? TransactionType { get; set; }
+    public virtual TransactionType TransactionType { get; set; } = null!;
 
     [InverseProperty(nameof(TransactionGroup.Transactions))]
     [ForeignKey(nameof(TransactionGroupId))]
-    public virtual TransactionGroup? TransactionGroup { get; set; }
+    public virtual TransactionGroup TransactionGroup { get; set; } = null!;
 
     [InverseProperty(nameof(TransactionMethod.Transactions))]
     [ForeignKey(nameof(TransactionMethodId))]
-    public virtual TransactionMethod? TransactionMethod { get; set; }
+    public virtual TransactionMethod TransactionMethod { get; set; } = null!;
 
     public TransactionDto ToDto()
     {

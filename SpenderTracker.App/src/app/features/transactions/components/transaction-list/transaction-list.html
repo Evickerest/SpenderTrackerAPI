@@ -1,29 +1,92 @@
-<p>transaction-list works!</p>
-
-
-<table>
-    <thead>
-        <th>Id</th>
-        <th>Transaction Type Id</th>
-        <th>Transaction Group Id</th>
-        <th>Transaction Method Id</th>
-        <th>Amount</th>
-        <th>Description</th>
-        <th>Timestamp</th>
-    </thead>
-    <tbody>
-        @if (transactions$ | async; as transactions) {
+<div id="transactions-wrapper">
+    <button id="add-transaction-button" (click)="addTransaction()">Add Transaction</button>
+    <table>
+        <thead>
+            <th>Id</th>
+            <th>Amount</th>
+            <th>Transaction Type</th>
+            <th>Transaction Group</th>
+            <th>Transaction Method</th>
+            <th>Description</th>
+            <th>Account</th>
+            <th>Timestamp</th>
+            <th></th>
+        </thead>
+        <tbody>
+            @if (isAddingTransaction) {
+                <tr>
+                    <td></td>
+                    <td>
+                        <input type="number" [(ngModel)]="newTransaction.amount" step=".01" value="0">
+                    </td>
+                    <td>
+                        <select id="transaction-type-select" [(ngModel)]="newTransaction.transactionTypeId">
+                            @if (transactionTypes$ | async; as types) {
+                                @for (t of types; track t.id) {
+                                    <option [ngValue]="t.id">{{ t.typeName }}</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <select id="transaction-group-select" [(ngModel)]="newTransaction.transactionGroupId">
+                            @if (transactionGroups$ | async; as groups) {
+                                @for (g of groups; track g.id) {
+                                    <option [ngValue]="g.id">{{ g.groupName }}</option>
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <select id="transaction-method-select" 
+                                [(ngModel)]="newTransaction.transactionMethodId"
+                                (change)="handleMethodChange($event)">
+                            @if (accountMethods$ | async; as accounts) {
+                                @for (a of accounts; track a.accountName) {
+                                    @for (m of a.methods; track m.id) {
+                                        <option [ngValue]="m.id" [attr.data-account]="a.accountName">{{ m.methodName }}</option>
+                                    }
+                                }
+                            }
+                        </select>
+                    </td>
+                    <td>
+                        <input type="text" maxlength="150" [(ngModel)]="newTransaction.description">
+                    </td>
+                    <td>
+                        <span id="account-name"></span>
+                    </td>
+                    <td>
+                        <span [textContent]="newTransaction.timestamp | date:'MM/dd/yyyy hh:mm:ss a'"></span>
+                    </td>
+                    <td>
+                        <div class="buttons-container">
+                            <button>Edit</button>
+                            <button (click)="saveTransaction(0)">Save</button>
+                            <button>Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            }
             @for (t of transactions; track t.id) {
                 <tr>
                     <td>{{ t.id }}</td>
-                    <td>{{ t.transactionGroupId }}</td>
-                    <td>{{ t.transactionTypeId }}</td>
-                    <td>{{ t.transactionMethodId }}</td>
-                    <td>{{ t.amount }}</td>
+                    <td [ngClass]="t.amount >= 0 ? 'amount-income' : 'amount-expense'">{{ t.amount }}</td>
+                    <td>{{ t.transactionTypeName }}</td>
+                    <td>{{ t.transactionGroupName }}</td>
+                    <td>{{ t.transactionMethodName }}</td>
                     <td>{{ t.description }}</td>
-                    <td>{{ t.timestamp }}</td>
+                    <td>{{ t.accountName }}</td>
+                    <td>{{ t.timestamp | date:'MM/dd/yyyy hh:mm:ss a' }}</td>
+                    <td>
+                        <div class="buttons-container">
+                            <button>Edit</button>
+                            <button (click)="saveTransaction(t.id)">Save</button>
+                            <button>Delete</button>
+                        </div>
+                    </td>
                 </tr>
             }
-        }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>

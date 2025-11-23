@@ -98,6 +98,12 @@ public class AccountController : ControllerBase
         return NoContent();
     }
 
+    [HttpGet("methods")]
+    public IActionResult GetAllMethods()
+    {
+        return Ok(_accountService.GetAllMethods());
+    }
+
     [HttpGet("{accountId:int}/methods/{methodId:int}")]
     public IActionResult GetMethodById(int accountId, int methodId) {
         if (!_accountService.DoesExist(accountId))
