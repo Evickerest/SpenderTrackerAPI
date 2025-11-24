@@ -13,13 +13,7 @@ public class TransactionMethod : IEntity<TransactionMethodDto>
 
     [StringLength(100)]
     [Unicode(false)]
-    public string MethodName { get; set; } = null!;
-
-    public int AccountId { get; set; }
-
-    [InverseProperty(nameof(Model.Account.TransactionMethods))]
-    [ForeignKey(nameof(AccountId))]
-    public virtual Account Account { get; set; } = null!;
+    public string MethodName { get; set; } = null!; 
 
     [InverseProperty(nameof(Transaction.TransactionMethod))]
     public virtual ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
@@ -29,8 +23,7 @@ public class TransactionMethod : IEntity<TransactionMethodDto>
         return new TransactionMethodDto
         {
             Id = this.Id,
-            MethodName = this.MethodName,
-            AccountId = this.AccountId
+            MethodName = this.MethodName
         };
     }
 }

@@ -5,5 +5,4 @@ namespace SpenderTracker.Core.Interfaces;
 
 public interface IAccountService : IBaseService<Account, AccountDto>
 {
-    List<MethodListDto> GetAllMethods(); 
 }

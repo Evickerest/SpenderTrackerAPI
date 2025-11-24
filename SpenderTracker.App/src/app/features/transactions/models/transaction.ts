@@ -3,7 +3,10 @@ export interface Transaction {
     transactionTypeId: number,
     transactionGroupId: number,
     transactionMethodId: number,
+    accountId: number,
     amount: number,
     description: string | null,
-    timestamp: string
+    timestamp: string,
+    isEditing: boolean
+    localTimestamp: string
 }

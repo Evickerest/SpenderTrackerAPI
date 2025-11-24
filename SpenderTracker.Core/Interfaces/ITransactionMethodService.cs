@@ -5,5 +5,4 @@ namespace SpenderTracker.Core.Interfaces;
 
 public interface ITransactionMethodService : IBaseService<TransactionMethod, TransactionMethodDto>
 {
-    List<TransactionMethodDto> GetAllByAccountId(int accountId);
 }

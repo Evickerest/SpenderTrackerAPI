@@ -32,11 +32,11 @@
   ],
 
   "TransactionMethods": [
-    { "MethodName": "Debit Card", "AccountId": 1 },
-    { "MethodName": "Bank Transfer", "AccountId": 2 },
-    { "MethodName": "Credit Card", "AccountId": 4 },
-    { "MethodName": "Cash", "AccountId": 3 },
-    { "MethodName": "Mobile Payment", "AccountId": 1 }
+    { "MethodName": "Debit Card" },
+    { "MethodName": "Bank Transfer" },
+    { "MethodName": "Credit Card" },
+    { "MethodName": "Cash" },
+    { "MethodName": "Mobile Payment" }
   ],
 
   "Transactions": [

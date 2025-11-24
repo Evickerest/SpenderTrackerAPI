@@ -17,6 +17,8 @@ public class Transaction : IEntity<TransactionDto>
 
     public int TransactionMethodId { get; set; }
 
+    public int AccountId { get; set; }
+
     [Precision(19, 4)]
     public decimal Amount { get; set; }
 
@@ -42,6 +44,10 @@ public class Transaction : IEntity<TransactionDto>
     [ForeignKey(nameof(TransactionMethodId))]
     public virtual TransactionMethod TransactionMethod { get; set; } = null!;
 
+    [InverseProperty(nameof(Model.Account.Transactions))]
+    [ForeignKey(nameof(AccountId))]
+    public virtual Account Account { get; set; } = null!;
+
     public TransactionDto ToDto()
     {
         return new TransactionDto
@@ -50,6 +56,7 @@ public class Transaction : IEntity<TransactionDto>
             TransactionTypeId = this.TransactionTypeId,
             TransactionGroupId = this.TransactionGroupId,
             TransactionMethodId = this.TransactionMethodId,
+            AccountId = this.AccountId,
             Amount = this.Amount,
             Description = this.Description,
             Timestamp = this.Timestamp

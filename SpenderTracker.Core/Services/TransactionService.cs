@@ -10,22 +10,13 @@ public class TransactionService : BaseService<Transaction, TransactionDto>, ITra
 {
     public TransactionService(ApplicationContext dbContext) : base (dbContext)
     { 
-    }
+    } 
 
-    new public List<TransactionListDto> GetAll()
+    new public List<TransactionDto> GetAll()
     {
         return _dbContext.Transactions.AsNoTracking().
-            Select(t => new TransactionListDto
-            {
-                Id = t.Id,
-                TransactionTypeName = t.TransactionType.TypeName,
-                TransactionGroupName = t.TransactionGroup.GroupName,
-                TransactionMethodName = t.TransactionMethod.MethodName,
-                AccountName = t.TransactionMethod.Account.AccountName,
-                Description = t.Description,
-                Amount = t.Amount,
-                Timestamp = t.Timestamp
-            }).
-            ToList(); 
+            OrderByDescending(t => t.Timestamp).
+            Select(t => t.ToDto()).
+            ToList();
     }
 }

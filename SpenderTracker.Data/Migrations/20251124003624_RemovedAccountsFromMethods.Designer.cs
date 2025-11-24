@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SpenderTracker.Data.Context;
 
@@ -11,9 +12,11 @@ using SpenderTracker.Data.Context;
 namespace SpenderTracker.Data.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20251124003624_RemovedAccountsFromMethods")]
+    partial class RemovedAccountsFromMethods
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -81,9 +84,6 @@ namespace SpenderTracker.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AccountId")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("Amount")
                         .HasPrecision(19, 4)
                         .HasColumnType("decimal(19,4)");
@@ -111,8 +111,6 @@ namespace SpenderTracker.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AccountId");
 
                     b.HasIndex("TransactionGroupId");
 
@@ -191,12 +189,6 @@ namespace SpenderTracker.Data.Migrations
 
             modelBuilder.Entity("SpenderTracker.Data.Model.Transaction", b =>
                 {
-                    b.HasOne("SpenderTracker.Data.Model.Account", "Account")
-                        .WithMany("Transactions")
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("SpenderTracker.Data.Model.TransactionGroup", "TransactionGroup")
                         .WithMany("Transactions")
                         .HasForeignKey("TransactionGroupId")
@@ -215,18 +207,11 @@ namespace SpenderTracker.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Account");
-
                     b.Navigation("TransactionGroup");
 
                     b.Navigation("TransactionMethod");
 
                     b.Navigation("TransactionType");
-                });
-
-            modelBuilder.Entity("SpenderTracker.Data.Model.Account", b =>
-                {
-                    b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("SpenderTracker.Data.Model.TransactionGroup", b =>
