@@ -17,9 +17,9 @@ public class BudgetController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    public IActionResult GetById(int id)
+    public async Task<IActionResult> GetById(int id, CancellationToken ct)
     {
-        BudgetDto? dto = _budgetService.GetById(id);
+        BudgetDto? dto = await _budgetService.GetById(id, ct);
         if (dto == null)
         {
             return NotFound($"Could not find Budget with specified id {id}.");
@@ -29,9 +29,15 @@ public class BudgetController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult GetAll()
+    public async Task<IActionResult> GetAll(CancellationToken ct)
     {
-        return Ok(_budgetService.GetAll());
+        var dtos = await _budgetService.GetAll(ct); 
+        if (dtos == null)
+        {
+            return StatusCode(500, "An error occurred while retrieving Budgets.");
+        }
+
+        return Ok(dtos); 
     }
 
     [HttpPost]

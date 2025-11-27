@@ -6,10 +6,10 @@ public interface IBaseService<TEntity, TDto>
     where TEntity : IEntity<TDto>, new()
     where TDto : IDto
 {
-    TDto? GetById(int id);
-    List<TDto> GetAll();
-    TDto? Insert(TDto dto);
-    bool Update(TDto dto);
-    bool Delete(TDto dto);
-    bool DoesExist(int id);
+    Task<TDto?> GetById(int id, CancellationToken ct);
+    Task<List<TDto>?> GetAll(CancellationToken ct);
+    Task<TDto?> Insert(TDto dto, CancellationToken ct);
+    Task<bool> Update(TDto dto, CancellationToken ct);
+    Task<bool> Delete(int id, CancellationToken ct);
+    Task<bool> DoesExist(int id, CancellationToken ct);
 }

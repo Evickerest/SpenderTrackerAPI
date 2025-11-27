@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SpenderTracker.Core.Interfaces;
 using SpenderTracker.Data.Dto;
 
@@ -10,41 +9,45 @@ namespace SpenderTracker.API.Controllers;
 public class AccountController : ControllerBase
 {
     private readonly IAccountService _accountService;
-    private readonly ITransactionMethodService _methodService;
 
-    public AccountController(IAccountService accountService, ITransactionMethodService methodService)
+    public AccountController(IAccountService accountService)
     {
         _accountService = accountService;
-        _methodService = methodService;
     }
 
     [HttpGet("{id:int}")]
-    public IActionResult GetById(int id)
+    public async Task<IActionResult> GetById(int id, CancellationToken ct)
     {
-        AccountDto? dto = _accountService.GetById(id);
+        AccountDto? dto = await _accountService.GetById(id, ct);
         if (dto == null)
         {
-            return NotFound($"Could not find Account with specified id {id}.");
+            return NotFound($"Failed to get Account with id {id}.");
         }
 
         return Ok(dto);
     }
 
     [HttpGet]
-    public IActionResult GetAll()
+    public async Task<IActionResult> GetAll(CancellationToken ct)
     {
-        return Ok(_accountService.GetAll());
+        var dtos = await _accountService.GetAll(ct);
+        if (dtos == null)
+        {
+            return StatusCode(500, "An error occurred while retrieving Accounts.");
+        }
+
+        return Ok(dtos);
     }
 
     [HttpPost]
-    public IActionResult Insert([FromBody] AccountDto dto)
+    public async Task<IActionResult> Insert([FromBody] AccountDto dto, CancellationToken ct)
     {
         if (dto == null)
         {
             return BadRequest("Account must be included in the body");
         }
 
-        AccountDto? account = _accountService.Insert(dto);
+        AccountDto? account = await _accountService.Insert(dto, ct);
         if (account == null)
         {
             return StatusCode(500, "An error occurred while creating the Account.");
@@ -54,7 +57,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
-    public IActionResult Update(int id, [FromBody] AccountDto dto)
+    public async Task<IActionResult> Update(int id, [FromBody] AccountDto dto, CancellationToken ct)
     {
         if (dto == null)
         {
@@ -64,14 +67,9 @@ public class AccountController : ControllerBase
         if (dto.Id != id)
         {
             return BadRequest("Account id does not match specified id.");
-        }
+        } 
 
-        if (!_accountService.DoesExist(id))
-        {
-            return NotFound($"Could not find Account with specified id {id}.");
-        }
-
-        bool success = _accountService.Update(dto);
+        bool success = await _accountService.Update(dto, ct);
         if (!success)
         {
             return StatusCode(500, "An error occurred while updating the Account.");
@@ -81,15 +79,9 @@ public class AccountController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
-    public IActionResult Delete(int id)
-    {
-        AccountDto? dto = _accountService.GetById(id);
-        if (dto == null)
-        {
-            return NotFound($"Could not find Account with specified id {id}.");
-        }
-
-        bool success = _accountService.Delete(dto);
+    public async Task<IActionResult> Delete(int id, CancellationToken ct)
+    { 
+        bool success = await _accountService.Delete(id, ct);
         if (!success)
         {
             return StatusCode(500, "An error occurred while deleting the Account.");

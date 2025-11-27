@@ -21,7 +21,12 @@ builder.Services.AddScoped<IBudgetService, BudgetService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<ITransactionGroupService, TransactionGroupService>();
 builder.Services.AddScoped<ITransactionTypeService, TransactionTypeService>(); 
-builder.Services.AddScoped<ITransactionMethodService, TransactionMethodService>(); 
+builder.Services.AddScoped<ITransactionMethodService, TransactionMethodService>();
+
+builder.Host.UseSerilog();
+
+
+
 
 var app = builder.Build();
 
