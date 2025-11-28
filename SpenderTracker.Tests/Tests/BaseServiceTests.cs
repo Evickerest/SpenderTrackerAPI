@@ -1,4 +1,7 @@
-﻿using SpenderTracker.Core.Services;
+﻿using Microsoft.EntityFrameworkCore;
+using Moq;
+using SpenderTracker.Core.Services;
+using SpenderTracker.Data.Context;
 using SpenderTracker.Data.Dto;
 using SpenderTracker.Data.Model;
 
@@ -133,5 +136,26 @@ public class BaseServiceTest : IClassFixture<TestDatabaseFixture>
         var service = new BaseService<Account, AccountDto>(context);
         bool exists = await service.DoesExist(1, CancellationToken.None);
         Assert.True(exists); 
+    }
+
+    [Fact]
+    public async void GetById_Cancelled_Throws()
+    { 
+        var mockContext = new Mock<ApplicationContext>();
+        var mockSet = new Mock<DbSet<Account>>(); 
+
+        mockContext.Setup(m => m.Set<Account>()).Returns(mockSet.Object);
+        mockSet.Setup(m => m.FindAsync(It.IsAny<object[]>(), It.IsAny<CancellationToken>())).Returns(
+            async (object[] ids, CancellationToken ct) =>
+            {
+                await Task.Delay(TimeSpan.FromSeconds(1), ct);
+                return new Account(); 
+            }); 
+
+        var service = new BaseService<Account, AccountDto>(mockContext.Object);
+        using var cts = new CancellationTokenSource();
+        cts.CancelAfter(20);
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => service.GetById(1, cts.Token)); 
     } 
 }
