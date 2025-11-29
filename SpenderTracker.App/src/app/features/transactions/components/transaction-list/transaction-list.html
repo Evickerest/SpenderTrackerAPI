@@ -13,71 +13,20 @@
             <th></th>
         </thead>
         <tbody>
-            @for (t of transactions; track t.timestamp) {
+            @for (t of transactions.value(); track t.timestamp) {
                 <tr>
-                    <td>{{ t.isEditing ? "" : t.id }}</td>
+                    <td>{{ t.id }}</td>
+                    <td>{{ t.amount }}</td>
+                    <td>{{ t.type }}</td>
+                    <td>{{ t.group }}</td>
+                    <td>{{ t.method }}</td>
+                    <td>{{ t.account }}</td>
+                    <td>{{ t.description }}</td>
+                    <td>{{ t.timestamp | date:'MM/dd/yyyy h:mm:ss a'}}</td>
                     <td>
-                        <input type="number" 
-                               [(ngModel)]="t.amount" 
-                               [disabled]="!t.isEditing"
-                               step=".01" 
-                               value="0">
-                    </td>
-                    <td>
-                        <select class="transaction-type-select" 
-                                [(ngModel)]="t.transactionTypeId"
-                                [disabled]="!t.isEditing">
-                            @for (t of transactionTypes; track t.id) {
-                                <option [ngValue]="t.id">{{ t.typeName }}</option>
-                            }
-                        </select>
-                    </td>
-                    <td>
-                        <select class="transaction-group-select" 
-                                [(ngModel)]="t.transactionGroupId"
-                                [disabled]="!t.isEditing">
-                            @for (g of transactionGroups; track g.id) {
-                                <option [ngValue]="g.id">{{ g.groupName }}</option>
-                            }
-                        </select>
-                    </td>
-                    <td>
-                        <select class="transaction-method-select" 
-                                [(ngModel)]="t.transactionMethodId"
-                                [disabled]="!t.isEditing">
-                            @for (t of transactionMethods; track t.id) {
-                                <option [ngValue]="t.id">{{ t.methodName }}</option>
-                            }
-                        </select>
-                    </td>
-                    <td>
-                        <select class="account-select" 
-                                [(ngModel)]="t.accountId"
-                                [disabled]="!t.isEditing">
-                            @for (a of accounts; track a.id) {
-                                <option [ngValue]="a.id">{{ a.accountName }}</option>
-                            }
-                        </select>
-                    </td>
-                    <td>
-                        <input type="text" 
-                               maxlength="150" 
-                               [disabled]="!t.isEditing"
-                               [(ngModel)]="t.description">
-                    </td>
-                    <td>
-                        <input type="datetime"
-                               [readOnly]="!t.isEditing"
-                               [(ngModel)]="t.timestamp">
-                    </td>
-                    <td>
-                        <div class="buttons-container">
-                            @if (t.isEditing) {
-                                <button (click)="saveTransaction(t)">Save</button>
-                            } @else {
-                                <button (click)="editTransaction(t)">Edit</button>
-                            }
-                            <button (click)="deleteTransaction(t)">Delete</button>
+                        <div class="row-buttons">
+                            <button (click)="editTransaction(t.id)">Edit</button>
+                            <button (click)="deleteTransaction(t.id)">Delete</button>
                         </div>
                     </td>
                 </tr>

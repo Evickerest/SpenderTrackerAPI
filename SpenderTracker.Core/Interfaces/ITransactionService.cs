@@ -5,5 +5,5 @@ namespace SpenderTracker.Core.Interfaces;
 
 public interface ITransactionService : IBaseService<Transaction, TransactionDto>
 {
-    new List<TransactionDto> GetAll();
+    new Task<List<TransactionListDto>> GetAll(CancellationToken ct);
 }

@@ -12,11 +12,20 @@ public class TransactionService : BaseService<Transaction, TransactionDto>, ITra
     { 
     } 
 
-    new public List<TransactionDto> GetAll()
+    new public async Task<List<TransactionListDto>> GetAll(CancellationToken ct)
     {
-        return _dbContext.Transactions.AsNoTracking().
+        return await _dbContext.Transactions.AsNoTracking().
             OrderByDescending(t => t.Timestamp).
-            Select(t => t.ToDto()).
-            ToList();
-    }
+            Select(t => new TransactionListDto()
+            {
+                Id = t.Id,
+                Type = t.TransactionType.TypeName,
+                Group = t.TransactionGroup.GroupName,
+                Method = t.TransactionMethod.MethodName,
+                Account = t.Account.AccountName,
+                Description = t.Description,
+                Timestamp = t.Timestamp 
+            }).
+            ToListAsync(ct);
+    } 
 }

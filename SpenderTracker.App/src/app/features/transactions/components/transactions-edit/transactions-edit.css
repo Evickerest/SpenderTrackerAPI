@@ -1,0 +1,50 @@
+#page-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form-information h1 {
+    border-bottom: 2px solid black;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    width: 100%;
+}
+
+input, textarea, select {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+
+.form-buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+textarea {
+    field-sizing: content;
+    min-height: 75px;
+}
+
+:host ::ng-deep .form-group .ng-invalid:not(.ng-untouched) {
+    border: 0.8px solid red;
+}
+
+.form-group-error {
+    color: red;
+    min-height: 20px;
+}
+
+.validation-error::before {
+    content: "*";
+}
+

@@ -30,7 +30,7 @@ public class TransactionController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll(CancellationToken ct)
     {
-        var dtos = await _transactionService.GetAll(ct); ;
+        var dtos = await _transactionService.GetAll(ct);
         return Ok(dtos);
     }
 

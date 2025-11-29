@@ -7,6 +7,5 @@ export interface Transaction {
     amount: number,
     description: string | null,
     timestamp: string,
-    isEditing: boolean
     localTimestamp: string
 }
