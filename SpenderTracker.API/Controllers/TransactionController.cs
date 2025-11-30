@@ -28,9 +28,10 @@ public class TransactionController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll(CancellationToken ct)
+    public async Task<IActionResult> GetAll(CancellationToken ct, 
+        [FromQuery] int? typeId, [FromQuery] int? groupId, [FromQuery] int? methodId, [FromQuery] int? accountId)
     {
-        var dtos = await _transactionService.GetAll(ct);
+        var dtos = await _transactionService.GetAll(typeId, groupId, methodId, accountId, ct);
         return Ok(dtos);
     }
 

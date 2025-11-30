@@ -12,9 +12,13 @@ public class TransactionService : BaseService<Transaction, TransactionDto>, ITra
     { 
     } 
 
-    new public async Task<List<TransactionListDto>> GetAll(CancellationToken ct)
+    public async Task<List<TransactionListDto>> GetAll(int? typeId, int? groupId, int? methodId, int? accountId, CancellationToken ct)
     {
         return await _dbContext.Transactions.AsNoTracking().
+            Where(t => typeId == null || t.TransactionTypeId == typeId).
+            Where(t => groupId == null || t.TransactionGroupId == groupId).
+            Where(t => methodId == null || t.TransactionMethodId == methodId).
+            Where(t => accountId == null || t.AccountId == accountId).
             OrderByDescending(t => t.Timestamp).
             Select(t => new TransactionListDto()
             {
@@ -24,6 +28,7 @@ public class TransactionService : BaseService<Transaction, TransactionDto>, ITra
                 Method = t.TransactionMethod.MethodName,
                 Account = t.Account.AccountName,
                 Description = t.Description,
+                Amount = t.Amount,
                 Timestamp = t.Timestamp 
             }).
             ToListAsync(ct);

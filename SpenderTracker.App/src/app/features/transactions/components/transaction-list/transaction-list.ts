@@ -1,25 +1,89 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, effect, ElementRef, inject, linkedSignal, signal, viewChild } from '@angular/core';
 import { APIService } from '../../../../shared/services/apiservice';
 import { Transaction } from '../../models/transaction';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from "@angular/router";
-import { rxResource } from '@angular/core/rxjs-interop';
+import { Router } from "@angular/router";
+import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { TransactionListDto } from '../../models/transaction-list-dto';
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgClass } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { SelectBox } from "../select-box/select-box";
+import { concat, delay, delayWhen, from, of, scan, startWith } from 'rxjs';
 
 @Component({
   selector: 'app-transaction-list',
-  imports: [FormsModule, DatePipe, RouterLink],
+  imports: [FormsModule, DatePipe, NgClass, SelectBox],
   templateUrl: './transaction-list.html',
   styleUrl: './transaction-list.css',
 })
 export class TransactionList {
     private readonly apiService = inject(APIService);
+    private readonly http = inject(HttpClient);
     private readonly router = inject(Router);
+    private readonly baseUrl = "https://localhost:7010/api";
+    private readonly typeSelect = viewChild.required<SelectBox>("typeSelect");
+    private readonly groupSelect = viewChild.required<SelectBox>("groupSelect");
+    private readonly methodSelect = viewChild.required<SelectBox>("methodSelect");
+    private readonly accountSelect = viewChild.required<SelectBox>("accountSelect");
+    private readonly DELAY_LOADING_MS = 300;
 
+    selectedTypeId = signal<number|undefined>(undefined);
+    selectedGroupId = signal<number|undefined>(undefined);
+    selectedMethodId = signal<number|undefined>(undefined);
+    selectedAccountId = signal<number|undefined>(undefined);
+
+    params = computed(() => ({
+        typeId: this.selectedTypeId(),
+        groupId: this.selectedGroupId(),
+        methodId: this.selectedMethodId(),
+        accountId: this.selectedAccountId()
+    }));
+
+    // Transactions Resource
     transactions = rxResource({
-        stream: () => this.apiService.getAll<TransactionListDto[]>("transactions")
+        params: this.params,
+        stream: (p) => {
+            const filter = this.getQueryFilterString(p.params);
+            return this.http.get<TransactionListDto[]>(`${this.baseUrl}/transactions${filter}`)   
+        }
     });
+
+    isLoading = computed(() => 
+        (this.transactions.isLoading() ||
+        this.typeSelect().isLoading() ||
+        this.groupSelect().isLoading() ||
+        this.methodSelect().isLoading() ||
+        this.accountSelect().isLoading()) && !this.hasError()
+    );
+
+    hasError = computed(() => 
+        this.transactions.error()?.cause ||
+        this.typeSelect().error()?.cause ||
+        this.groupSelect().error()?.cause ||
+        this.methodSelect().error()?.cause ||
+        this.accountSelect().error()?.cause
+    );
+
+    showLoading = signal(false);
+
+    eff = effect(() => {
+        if (this.isLoading()) {
+            this.showLoading.set(false);
+            setTimeout(() => this.showLoading.set(true), this.DELAY_LOADING_MS);
+        }
+    })
+
+    getQueryFilterString(params: any): string {
+        const filters = [];
+        if (params.typeId && params.typeId !== "null") filters.push(`typeId=${params.typeId}`);
+        if (params.groupId && params.groupId !== "null") filters.push(`groupId=${params.groupId}`);
+        if (params.methodId && params.methodId !== "null") filters.push(`methodId=${params.methodId}`);
+        if (params.accountId && params.accountId !== "null") filters.push(`accountId=${params.accountId}`);
+        let filterString = filters.join("&");
+        if (filterString.length > 1) filterString = "?" + filterString;
+
+        return filterString;
+    }
 
     addTransaction() {
         this.router.navigate(["transactions", "new"]);
@@ -31,12 +95,12 @@ export class TransactionList {
 
     deleteTransaction(id: number) {
         const res = confirm("Are you sure you want to delete this transaction?");
-        if (res) {
-            this.apiService.delete<Transaction>("transactions", id).subscribe(success => {
-                if (!success) {
-                    alert("Failed to delete transaction.");
-                }
-            })
-        }
+        if (!res) return;
+
+        this.apiService.delete<Transaction>("transactions", id) .subscribe(success => {
+            if (!success) {
+                alert("Failed to delete transaction.");
+            }
+        });
     }
 }

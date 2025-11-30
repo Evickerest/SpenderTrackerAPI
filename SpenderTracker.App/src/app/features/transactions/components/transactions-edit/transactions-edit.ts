@@ -1,14 +1,15 @@
-import { Component, computed, effect, inject, input, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TransactionGroup } from '../../models/transaction-group';
 import { TransactionMethod } from '../../models/transaction-method';
 import { TransactionType } from '../../models/transaction-type';
 import { APIService } from '../../../../shared/services/apiservice';
-import { switchMap, of, catchError } from 'rxjs';
+import { switchMap, of, catchError, map, tap, EMPTY, finalize, forkJoin } from 'rxjs';
 import { Account } from '../../models/account';
-import { Router, RouterLink } from "@angular/router";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { Transaction } from '../../models/transaction';
-import { rxResource } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-transactions-edit',
@@ -19,30 +20,24 @@ import { rxResource } from '@angular/core/rxjs-interop';
 export class TransactionsEdit {
     private readonly apiService = inject(APIService);
     private readonly router = inject(Router);
-    private readonly hasError = computed(() => 
-        this.types.error() || this.groups.error() || this.methods.error() || this.accounts.error() 
-    );
+    private readonly route = inject(ActivatedRoute);
 
-    transactionInput = input<Transaction>();
-    isNewForm = signal<boolean>(false);
-    transaction = signal<Transaction>({} as Transaction);
+    // Form resources signals
+    types = signal<TransactionType[]>([]);
+    groups = signal<TransactionGroup[]>([]);
+    methods = signal<TransactionMethod[]>([]);
+    accounts = signal<Account[]>([]);
+    transaction = signal<Transaction|undefined>(undefined);
 
-    types = rxResource({ 
-        stream: () => this.apiService.getAll<TransactionType[]>("transaction-types", true)
-    });
+    // Form state signals
+    isNewForm = signal<boolean>(true);
+    transactionLoading = signal<boolean>(true);
+    resourcesLoading = signal<boolean>(true);
+    errorMessage = signal<string|undefined>(undefined);
+    showLoading = signal<boolean>(false);
+    formLoading = computed(() => (this.transactionLoading() || this.resourcesLoading()) && !this.errorMessage());
 
-    groups = rxResource({ 
-        stream: () => this.apiService.getAll<TransactionGroup[]>("transaction-groups", true)
-    });
-
-    methods = rxResource({ 
-        stream: () => this.apiService.getAll<TransactionMethod[]>("transaction-methods", true)
-    });
-
-    accounts = rxResource({ 
-        stream: () => this.apiService.getAll<Account[]>("accounts", true)
-    });
-
+    // Form contract
     form = new FormGroup({
         id: new FormControl<number|null>(null),
         amount: new FormControl<number|null>(null, [Validators.required]),
@@ -54,25 +49,63 @@ export class TransactionsEdit {
         localTimestamp: new FormControl('', [Validators.required])
     });
 
-    ngOnInit() {
-        const t = this.transactionInput()
-
-        if (t) {
+    constructor() {
+        // Fetch either transaction from either or create a new transaction
+        // based on the id in the url
+        this.route.paramMap.pipe(
+            tap(() => {
+              this.transactionLoading.set(true);
+              setTimeout(() => this.showLoading.set(true), 300) // Wait 300 ms before showing loading icon
+            }),
+            map(params => params.get("id")),
+            switchMap(paramId => {
+                const id = parseInt(paramId ?? "");
+                if (id) {
+                    this.isNewForm.set(false);
+                    return this.apiService.getById<Transaction>("transactions", id).pipe(
+                        takeUntilDestroyed()
+                    )
+                } else {
+                    this.isNewForm.set(true);
+                    return of(this.getDefaultTransaction());
+                }
+            }),
+            catchError((err: HttpErrorResponse) => {
+                this.errorMessage.set(err.error);
+                return EMPTY;
+            }))
+        .subscribe(t => {
+            this.showLoading.set(false);
+            this.transactionLoading.set(false);
             this.transaction.set(t);
-            this.isNewForm.set(false);
-            // Convert UTC time to Local time
-            t.localTimestamp = this.toLocalDateTime(t.timestamp);
-            this.resetForm();
-        } else {
-            this.transaction.set(this.getDefaultTransaction());
-            this.isNewForm.set(true);
-        }
+            this.rebindForm();
+        });
+
+        // Fetch all resources
+        forkJoin({
+            types: this.apiService.getAll<TransactionType[]>("transaction-types", true).pipe(takeUntilDestroyed()),
+            groups: this.apiService.getAll<TransactionGroup[]>("transaction-groups", true).pipe(takeUntilDestroyed()),
+            methods: this.apiService.getAll<TransactionMethod[]>("transaction-methods", true).pipe(takeUntilDestroyed()),
+            accounts: this.apiService.getAll<Account[]>("accounts", true).pipe(takeUntilDestroyed())
+        }).pipe(
+            tap(() => this.resourcesLoading.set(true)),
+            catchError((err: HttpErrorResponse) => {
+                console.log(err);
+                this.transactionLoading.set(false);
+                this.errorMessage.set(err.error);
+                return EMPTY;
+            }),
+            finalize(() => this.resourcesLoading.set(false))
+        ).subscribe(resources => {
+            this.types.set(resources.types);
+            this.groups.set(resources.groups);
+            this.methods.set(resources.methods);
+            this.accounts.set(resources.accounts);
+        });
     }
 
     getDefaultTransaction(): Transaction {
-        const t = {} as Transaction;
-        t.id = 0;
-        t.localTimestamp = this.toLocalDateTime(new Date().toISOString());
+        const t = {id: 0} as Transaction;
         return t;
     }
 
@@ -97,7 +130,7 @@ export class TransactionsEdit {
         ).subscribe(success => {
             if (success) {
                 this.transaction.set(t);
-                this.resetForm();
+                this.rebindForm();
                 alert("Saved transaction");
             } else {
                 alert("Failed to update transaction");
@@ -110,6 +143,7 @@ export class TransactionsEdit {
             if (newTransaction) {
                 this.transaction.set(newTransaction);
                 this.isNewForm.set(false);
+                this.rebindForm();
             } else {
                 alert("Failed to create transaction.");
             }
@@ -130,8 +164,13 @@ export class TransactionsEdit {
         });
     }
 
-    resetForm() {
-        this.form.reset(this.transaction());
+    rebindForm() {
+        const t = this.transaction();
+        if (t) {
+            // Convert UTC time to local on the transaction
+            t.localTimestamp = this.toLocalDateTime(t.timestamp || new Date().toISOString());
+            this.form.reset(this.transaction());
+        }
     }
 
     hasChanges(): boolean {
@@ -139,6 +178,7 @@ export class TransactionsEdit {
     }
 
     validateTransaction(): boolean {
+        this.form.updateValueAndValidity();
         return this.form.valid
     }
 

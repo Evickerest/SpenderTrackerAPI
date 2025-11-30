@@ -1,35 +1,129 @@
 <div id="transactions-wrapper">
     <button id="add-transaction-button" (click)="addTransaction()">Add Transaction</button>
+    <div class="filters-container">
+        <div class="filter">
+            <app-select-box route="transaction-types" 
+                            #typeSelect
+                            display="typeName" 
+                            value="id"
+                            name="Type"
+                            [(selectedValue)]="selectedTypeId"></app-select-box>
+        </div>
+        <div class="filter">
+            <app-select-box route="transaction-groups" 
+                            #groupSelect
+                            display="groupName" 
+                            value="id"
+                            name="Group"
+                            [(selectedValue)]="selectedGroupId"></app-select-box>
+        </div>
+        <div class="filter">
+            <app-select-box route="transaction-methods" 
+                            #methodSelect
+                            display="methodName" 
+                            value="id"
+                            name="Method"
+                            [(selectedValue)]="selectedMethodId"></app-select-box>
+        </div>
+        <div class="filter">
+            <app-select-box route="accounts" 
+                            #accountSelect
+                            display="accountName" 
+                            value="id"
+                            name="Account"
+                            [(selectedValue)]="selectedAccountId"></app-select-box>
+        </div>
+    </div>
     <table>
         <thead>
-            <th>Id</th>
+            <th>Date</th>
             <th>Amount</th>
-            <th>Transaction Type</th>
-            <th>Transaction Group</th>
-            <th>Transaction Method</th>
+            <th>Type</th>
+            <th>Group</th>
+            <th>Method</th>
             <th>Account</th>
-            <th>Description</th>
-            <th>Timestamp</th>
             <th></th>
         </thead>
         <tbody>
-            @for (t of transactions.value(); track t.timestamp) {
-                <tr>
-                    <td>{{ t.id }}</td>
-                    <td>{{ t.amount }}</td>
-                    <td>{{ t.type }}</td>
-                    <td>{{ t.group }}</td>
-                    <td>{{ t.method }}</td>
-                    <td>{{ t.account }}</td>
-                    <td>{{ t.description }}</td>
-                    <td>{{ t.timestamp | date:'MM/dd/yyyy h:mm:ss a'}}</td>
-                    <td>
-                        <div class="row-buttons">
-                            <button (click)="editTransaction(t.id)">Edit</button>
-                            <button (click)="deleteTransaction(t.id)">Delete</button>
-                        </div>
-                    </td>
-                </tr>
+            @if (this.isLoading()) {
+                @if (this.showLoading()) {
+                    <tr>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                        <td><div class="skeleton skeleton-row"></div></td>
+                    </tr>
+                }
+            } @else {
+                @let error = this.hasError();
+                
+                @if (error) {
+                    <tr>
+                        <td>Failed to fetch rows: {{ error }}</td>
+                    </tr>
+                } @else {
+                    @for (t of transactions.value(); track t.timestamp) {
+                        <tr>
+                            @let amountClass = {income: t.amount > 0, expense: t.amount < 0};
+
+                            <td>{{ t.timestamp | date:'mediumDate'}}</td>
+                            <td [ngClass]="amountClass">{{ t.amount }}</td>
+                            <td>{{ t.type }}</td>
+                            <td>{{ t.group }}</td>
+                            <td>{{ t.method }}</td>
+                            <td>{{ t.account }}</td>
+                            <td>
+                                <div class="row-buttons">
+                                    <button (click)="editTransaction(t.id)">
+                                        <img title="Edit" alt="Edit" src="images/edit.svg">
+                                    </button>
+                                    <button (click)="deleteTransaction(t.id)">
+                                        <img title="Delete" alt="Delete" src="images/delete.svg">
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
             }
         </tbody>
     </table>
