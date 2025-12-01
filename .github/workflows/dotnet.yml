@@ -35,6 +35,6 @@ jobs:
       with:
         files: '**/appsettings.json'
       env:
-        ConnectionStrings.TestDatabase: "Server=localhost;Database=SpenderTrackerTest;User Id=root;Password=root;TrustServerCertificate=true" 
+        ConnectionStrings.TestDatabase: "Server=localhost;Database=SpenderTrackerTest;User Id=sa;Password=dbatools.I0;TrustServerCertificate=true" 
     - name: Run tests with MSSQL Fixture
       run: dotnet test --no-build --verbosity normal
