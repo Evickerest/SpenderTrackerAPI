@@ -39,4 +39,4 @@ jobs:
     - name: List files
       run: ls -R && pwd
     - name: Run tests with MSSQL Fixture
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --verbosity normal
