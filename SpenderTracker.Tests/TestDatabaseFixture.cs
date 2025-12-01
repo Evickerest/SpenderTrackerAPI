@@ -52,13 +52,11 @@ public class TestDatabaseFixture
     }
 
     public void SeedData(ApplicationContext context)
-    {
-        string localSeedFilePath = Path.Combine(Directory.GetCurrentDirectory(), SeedDataFilePath); 
-
-        if (!File.Exists(localSeedFilePath))
+    { 
+        if (!File.Exists(SeedDataFilePath))
             throw new FileNotFoundException("Could not find seed data file.");
 
-        string file = File.ReadAllText(localSeedFilePath); 
+        string file = File.ReadAllText(SeedDataFilePath); 
         SeedData? data = JsonSerializer.Deserialize<SeedData>(file);
 
         if (data == null)
