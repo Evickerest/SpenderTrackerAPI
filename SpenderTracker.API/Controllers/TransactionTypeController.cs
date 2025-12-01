@@ -86,6 +86,10 @@ public class TransactionTypeController : ControllerBase
             return NotFound($"Could not find Transaction Type with specified id {id}.");
         }
 
+        if (await _typeService.IsInTransactions(id, ct)) {             
+            return BadRequest("Cannot delete Transaction Type as it is in at least one transaction.");
+        }
+
         bool success = await _typeService.Delete(id);
         if (!success)
         {

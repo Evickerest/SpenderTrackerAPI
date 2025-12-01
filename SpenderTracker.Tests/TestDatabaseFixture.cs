@@ -58,6 +58,7 @@ public class TestDatabaseFixture
         context.SaveChanges();
         context.TransactionMethods.AddRange(data.TransactionMethods);
         context.SaveChanges(); 
-        context.Transactions.AddRange(data.Transactions); 
+        context.Transactions.AddRange(data.Transactions);
+        context.SaveChanges(); 
     }
 }

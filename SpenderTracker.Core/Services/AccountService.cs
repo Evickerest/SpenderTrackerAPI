@@ -11,4 +11,10 @@ public class AccountService : BaseService<Account, AccountDto>, IAccountService
     public AccountService(ApplicationContext dbContext) : base (dbContext)
     { 
     } 
+
+    public async Task<bool> IsInTransactions(int id, CancellationToken ct)
+    {
+        return await _dbContext.Transactions.AsNoTracking().
+            AnyAsync(t => t.AccountId == id, ct);
+    }
 }

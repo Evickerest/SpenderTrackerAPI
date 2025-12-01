@@ -86,6 +86,10 @@ public class TransactionMethodController : ControllerBase
             return NotFound($"Could not find Transaction Method with specified id {id}.");
         } 
 
+        if (await _methodService.IsInTransactions(id, ct)) {             
+            return BadRequest("Cannot delete Transaction Method as it is in at least one transaction.");
+        }
+
         bool success = await _methodService.Delete(id);
         if (!success)
         {

@@ -11,4 +11,10 @@ public class TransactionMethodService : BaseService<TransactionMethod, Transacti
     public TransactionMethodService(ApplicationContext dbContext) : base (dbContext)
     { 
     } 
+
+    public async Task<bool> IsInTransactions(int id, CancellationToken ct)
+    {
+        return await _dbContext.Transactions.AsNoTracking().
+            AnyAsync(t => t.TransactionMethodId == id, ct);
+    }
 }

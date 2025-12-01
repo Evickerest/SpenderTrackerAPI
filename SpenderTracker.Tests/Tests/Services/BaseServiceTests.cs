@@ -32,7 +32,7 @@ public class BaseServiceTest : IClassFixture<TestDatabaseFixture>
         Assert.Equal(expectedId, account.Id);
         Assert.Equal(expectedName, account.AccountName);
         Assert.Equal(expectedBalance, account.Balance); 
-    }
+}
 
     [Theory]
     [InlineData(10)]

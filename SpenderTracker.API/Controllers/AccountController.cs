@@ -86,6 +86,10 @@ public class AccountController : ControllerBase
            return NotFound($"Account with id {id} does not exist.");
         } 
 
+        if (await _accountService.IsInTransactions(id, ct)) {             
+            return BadRequest("Cannot delete Account as it is in at least one transaction.");
+        }
+
         bool success = await _accountService.Delete(id);
         if (!success)
         {
