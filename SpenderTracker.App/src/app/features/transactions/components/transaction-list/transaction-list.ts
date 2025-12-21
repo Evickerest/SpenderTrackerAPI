@@ -2,7 +2,7 @@ import { Component, computed, effect, ElementRef, inject, linkedSignal, signal, 
 import { APIService } from '../../../../shared/services/apiservice';
 import { Transaction } from '../../models/transaction';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { TransactionListDto } from '../../models/transaction-list-dto';
 import { DatePipe, NgClass, Location, CurrencyPipe } from '@angular/common';
@@ -14,7 +14,7 @@ import { UrlService } from '../../../../shared/services/url-service';
 
 @Component({
   selector: 'app-transaction-list',
-  imports: [FormsModule, DatePipe, NgClass, SelectBox, CurrencyPipe],
+  imports: [FormsModule, DatePipe, NgClass, SelectBox, CurrencyPipe, RouterLink],
   templateUrl: './transaction-list.html',
   styleUrl: './transaction-list.css',
 })

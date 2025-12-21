@@ -40,8 +40,8 @@ export class APIService {
     delete<T>(route: string, id: number): Observable<boolean> {
         return this.http.delete(`${this.baseUrl}/${route}/${id}`)
             .pipe(
-                catchError(() => of(false)),
-                switchMap(() => of(true))
+                switchMap(() => of(true)),
+                catchError(() => of(false))
             );
     }
 }

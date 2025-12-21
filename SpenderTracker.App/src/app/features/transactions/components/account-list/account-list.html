@@ -1,0 +1,54 @@
+<div class="wrapper">
+    <a routerLink="/">Home</a>
+    <div class="page-title">
+        <h1>Accounts</h1>
+        <button (click)="addAccount()">
+            <img title="Add" alt="Add" src="images/add.svg">
+        </button>
+    </div>
+    <div class="cards">
+        @for (a of accounts(); track a.id) {
+            <div class="card">
+                <div class="card-title">
+                    @if (a.isEditing) {
+                        <input 
+                            type=text 
+                            [field]="accountForm.accountName"
+                        >
+                    } @else {
+                        <h2>{{ a.accountName }}</h2>
+                    }
+                    <div class="card-actions">
+                        @if (a.isEditing) {
+                            <button (click)="saveAccount()">
+                                <img title="Save" alt="Save" src="images/save.svg">
+                            </button>
+                            <button (click)="clearEditing()">
+                                <img title="Cancel" alt="Cancel" src="images/cancel.svg">
+                            </button>
+                        } @else {
+                            <button (click)="editAccount(a.id)">
+                                <img title="Edit" alt="Edit" src="images/edit.svg">
+                            </button>
+                            <button (click)="deleteAccount(a.id)">
+                                <img title="Delete" alt="Delete" src="images/delete.svg">
+                            </button>
+                        }
+                    </div>
+                </div>
+                <div class="card-information">
+                    <p>Balance:</p>
+                    @if (a.isEditing) {
+                        <input 
+                            type="number" step=".01" 
+                            [field]="accountForm.balance"
+                        >
+                    } @else {
+                        @let style = a.balance < 0 ? "balance-negative" : "balance-positive";
+                        <p [class]="style">{{ a.balance | currency }}</p>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>

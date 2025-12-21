@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { Transactions } from './features/transactions/transactions';
 import { TransactionsEdit } from './features/transactions/components/transactions-edit/transactions-edit';
 import { ErrorPage } from './features/error/error';
+import { AccountList } from './features/transactions/components/account-list/account-list';
 
 export const routes: Routes = [
     {
@@ -20,4 +21,8 @@ export const routes: Routes = [
         path: "transactions/new",
         component: TransactionsEdit
     },
+    {
+        path: "accounts",
+        component: AccountList
+    }
 ];
