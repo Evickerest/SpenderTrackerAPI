@@ -131,5 +131,7 @@ export class AccountList {
 
     clearEditing() {
         this.accounts.update(list => list.map(l => ({...l, isEditing: false})));
+        this.accountsRemoveById(0);
+        this.isAdding.set(false);
     }
 }

@@ -11,10 +11,7 @@
             <div class="card">
                 <div class="card-title">
                     @if (a.isEditing) {
-                        <input 
-                            type=text 
-                            [field]="accountForm.accountName"
-                        >
+                        <input type=text [field]="accountForm.accountName">
                     } @else {
                         <h2>{{ a.accountName }}</h2>
                     }
@@ -39,10 +36,7 @@
                 <div class="card-information">
                     <p>Balance:</p>
                     @if (a.isEditing) {
-                        <input 
-                            type="number" step=".01" 
-                            [field]="accountForm.balance"
-                        >
+                        <input type="number" step=".01" [field]="accountForm.balance">
                     } @else {
                         @let style = a.balance < 0 ? "balance-negative" : "balance-positive";
                         <p [class]="style">{{ a.balance | currency }}</p>
