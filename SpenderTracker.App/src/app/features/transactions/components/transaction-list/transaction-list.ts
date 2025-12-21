@@ -7,14 +7,14 @@ import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { TransactionListDto } from '../../models/transaction-list-dto';
 import { DatePipe, NgClass, Location, CurrencyPipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { SelectBox } from "../select-box/select-box";
 import { concat, delay, delayWhen, from, of, scan, startWith } from 'rxjs';
 import { UrlService } from '../../../../shared/services/url-service';
+import { SelectBox } from "../../../../shared/components/select-box/select-box";
 
 
 @Component({
   selector: 'app-transaction-list',
-  imports: [FormsModule, DatePipe, NgClass, SelectBox, CurrencyPipe],
+  imports: [FormsModule, DatePipe, NgClass, CurrencyPipe, SelectBox],
   templateUrl: './transaction-list.html',
   styleUrl: './transaction-list.css',
 })
@@ -30,10 +30,10 @@ export class TransactionList {
     private readonly accountSelect = viewChild.required<SelectBox>("accountSelect");
     private readonly DELAY_LOADING_MS = 300;
 
-    selectedTypeId = signal<number|undefined>(undefined);
-    selectedGroupId = signal<number|undefined>(undefined);
-    selectedMethodId = signal<number|undefined>(undefined);
-    selectedAccountId = signal<number|undefined>(undefined);
+    selectedTypeId = signal<number>(NaN);
+    selectedGroupId = signal<number>(NaN);
+    selectedMethodId = signal<number>(NaN);
+    selectedAccountId = signal<number>(NaN);
 
     params = computed(() => ({
         typeId: this.selectedTypeId(),

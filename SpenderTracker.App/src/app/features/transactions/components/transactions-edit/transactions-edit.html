@@ -5,174 +5,87 @@
             <h1>{{ isNewForm() ? "Create" : "Edit" }} Transaction</h1>
         </div>
 
-        <form [formGroup]="form" (ngSubmit)="saveTransaction()">
-        @if (!this.formLoading()) {
-            @let error = errorMessage();
-            @if (error) {
-                <p>Error loading page: {{ error }}</p>
-            }
-
-            @if (!error) {
-                <div class="form-group">
-                    <label for="amount">Amount: </label>
-                    <input id="amount" type="number" step=".01" formControlName="amount" placeholder="Enter Amount..">
-                    <div class="form-group-error">
-                        @let amount = form.controls.amount;
-
-                        @if (amount.touched) {
-                            @if (amount.hasError("required")) {
-                                <div class="validation-error">
-                                    Amount is required.
-                                </div>
-                            }
-                        }
-                    </div>
+        <form (ngSubmit)="saveTransaction()">
+            <!-- <div class="form-group">
+                <label for="amount">Amount: </label>
+                <input id="amount" type="number" step=".01" [field]="form.amount" placeholder="Enter Amount..">
+                <div class="form-group-error">
+                    <app-validation-error [control]="form.amount" />
                 </div>
+            </div> -->
 
-                <div class="form-group">
-                    <label for="transaction-type">Type: </label>
-                    <select id="transaction-type" formControlName="transactionTypeId">
-                        <option [value]="null" disabled selected>Select Type...</option>
-                        @for (t of types(); track t.id) {
-                            <option [value]="t.id">{{ t.typeName }}</option>
-                        }
-                    </select>
-                    <div class="form-group-error">
-                        @let type = form.controls.transactionTypeId;
-
-                        @if (type.touched) {
-                            @if (type.hasError("required")) {
-                                <div class="validation-error">
-                                    Type is required.
-                                </div>
-                            }
-                        }
-                    </div>
+            <div class="form-group">
+                <label>
+                    Type:
+                    <app-select-box [field]="form.transactionTypeId" resourceName="Type" route="transaction-types"
+                        displayMember="typeName" valueMember="id">
+                    </app-select-box>
+                    <app-validation-error [control]="form.transactionTypeId"></app-validation-error>
+                </label>
+                <div class="form-group-error">
+                    <app-validation-error [control]="form.transactionTypeId" />
                 </div>
-
-                <div class="form-group">
-                    <label for="transaction-group">Group: </label>
-                    <select id="transaction-group" formControlName="transactionGroupId">
-                        <option [value]="null" disabled selected>Select Group...</option>
-                        @for (g of groups(); track g.id) {
-                            <option [value]="g.id">{{ g.groupName }}</option>
-                        }
-                    </select>
-                    <div class="form-group-error">
-                        @let group = form.controls.transactionGroupId;
-
-                        @if (group.touched) {
-                            @if (group.hasError("required")) {
-                                <div class="validation-error">
-                                    Group is required.
-                                </div>
-                            }
-                        }
-                    </div>
+            </div>
+            <div class="form-group">
+                <label>
+                    Group:
+                    <app-select-box [field]="form.transactionGroupId" resourceName="Group" route="transaction-groups"
+                        displayMember="groupName" valueMember="id">
+                    </app-select-box>
+                    <app-validation-error [control]="form.transactionGroupId"></app-validation-error>
+                </label>
+                <div class="form-group-error">
+                    <app-validation-error [control]="form.transactionGroupId" />
                 </div>
-
-                <div class="form-group">
-                    <label for="transaction-method">Method: </label>
-                    <select id="transaction-method" formControlName="transactionMethodId">
-                        <option [value]="null" disabled selected>Select Method...</option>
-                        @for (t of methods(); track t.id) {
-                            <option [value]="t.id">{{ t.methodName }}</option>
-                        }
-                    </select>
-                    <div class="form-group-error">
-                        @let method = form.controls.transactionMethodId;
-
-                        @if (method.touched) {
-                            @if (method.hasError("required")) {
-                                <div class="validation-error">
-                                    Method is required.
-                                </div>
-                            }
-                        }
-                    </div>
+            </div>
+            <div class="form-group">
+                <label>
+                    Method:
+                    <app-select-box [field]="form.transactionMethodId" resourceName="Method" route="transaction-methods"
+                        displayMember="methodName" valueMember="id">
+                    </app-select-box>
+                    <app-validation-error [control]="form.transactionMethodId"></app-validation-error>
+                </label>
+                <div class="form-group-error">
+                    <app-validation-error [control]="form.transactionMethodId" />
                 </div>
-
-                <div class="form-group">
-                    <label for="account">Account: </label>
-                    <select id="account" formControlName="accountId">
-                        <option [value]="null" disabled selected>Select Account...</option>
-                        @for (a of accounts(); track a.id) {
-                            <option [value]="a.id">{{ a.accountName }}</option>
-                        }
-                    </select>
-                    <div class="form-group-error">
-                        @let account = form.controls.accountId;
-
-                        @if (account.touched) {
-                            @if (account.hasError("required")) {
-                                <div class="validation-error">
-                                    Account is required.
-                                </div>
-                            }
-                        }
-                    </div>
+            </div>
+            <div class="form-group">
+                <label>
+                    Account:
+                    <app-select-box [field]="form.accountId" resourceName="Account" route="accounts"
+                        displayMember="accountName" valueMember="id">
+                    </app-select-box>
+                    <app-validation-error [control]="form.accountId"></app-validation-error>
+                </label>
+                <div class="form-group-error">
+                    <app-validation-error [control]="form.accountId" />
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label for="description">Description: </label>
-                    <textarea id="description" formControlName="description" placeholder="Enter Description..."></textarea>
-                    <div class="form-group-error">
-                        @let desc = form.controls.description;
-
-                        @if (desc.touched) {
-                            @if (desc.hasError("required")) {
-                                <div class="validation-error">
-                                    Description is required.
-                                </div>
-                            }
-                            @if (desc.hasError("maxlength")) {
-                                <div class="validation-error">
-                                    Description cannot be more than 150 characters.
-                                </div>
-                            }
-                        }
-                    </div>
+            <div class="form-group">
+                <label for="description">Description: </label>
+                <textarea id="description" [field]="form.description" placeholder="Enter Description..."></textarea>
+                <div class="form-group-error">
+                    <app-validation-error [control]="form.description" />
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label for="localTimestamp">Timestamp: </label>
-                    <input id="localTimestamp" type="datetime-local" formControlName="localTimestamp">
-                    <div class="form-group-error">
-                        @let timestamp = form.controls.localTimestamp;
-
-                        @if (timestamp.touched) {
-                            @if (timestamp.hasError("required")) {
-                                <div class="validation-error">
-                                    Timestamp is required.
-                                </div>
-                            }
-                        }
-                    </div>
+            <div class="form-group">
+                <label for="localTimestamp">Timestamp: </label>
+                <input id="localTimestamp" type="datetime-local" [field]="form.localTimestamp">
+                <div class="form-group-error">
+                    <app-validation-error [control]="form.localTimestamp" />
                 </div>
+            </div>
 
-                <div class="form-buttons">
-                    <button type="submit" [disabled]="!form.dirty">{{ isNewForm() ? "Create" : "Save"
+            <div class="form-buttons">
+                <!-- <button type="submit" [disabled]="!form.dirty">{{ isNewForm() ? "Create" : "Save"
                         }}</button>
                     <button type="button" (click)="rebindForm()" [hidden]="!form.dirty">Cancel Changes</button>
                     <button type="button" (click)="closeForm(false)">Close</button>
-                    <button type="button" (click)="deleteTransaction()" [hidden]="isNewForm()">Delete</button>
-                </div>
-            }
-        } @else {
-            @if (this.showLoading()) {
-                <p>Loading...</p>
-                <div class="skeleton skeleton-control"></div>
-                <div class="skeleton skeleton-control"></div>
-                <div class="skeleton skeleton-control"></div>
-                <div class="skeleton skeleton-control"></div>
-                <div class="skeleton skeleton-control"></div>
-                <div class="skeleton skeleton-control"></div>
-                <div class="skeleton skeleton-control"></div>
-                <div class="skeleton skeleton-control"></div>
-                <div class="skeleton skeleton-control"></div>
-                <div class="skeleton skeleton-control"></div>
-            }
-        }
+                    <button type="button" (click)="deleteTransaction()" [hidden]="isNewForm()">Delete</button> -->
+            </div>
         </form>
     </div>
 </div>

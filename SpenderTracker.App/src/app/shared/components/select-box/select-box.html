@@ -1,0 +1,7 @@
+<select [value]="value()"
+        (change)="value.set($any($event).target.value)">
+    <option [value]="null" disabled selected>Select {{ resourceName() }}...</option>
+    @for (d of data(); track d[valueMember()]) {
+        <option [value]="d[valueMember()]">{{ d[displayMember()] }}</option>
+    }
+</select>

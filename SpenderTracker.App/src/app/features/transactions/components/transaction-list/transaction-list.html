@@ -2,36 +2,46 @@
     <button id="add-transaction-button" (click)="addTransaction()">Add Transaction</button>
     <div class="filters-container">
         <div class="filter">
-            <app-select-box route="transaction-types" 
-                            #typeSelect
-                            display="typeName" 
-                            value="id"
-                            name="Type"
-                            [(selectedValue)]="selectedTypeId"></app-select-box>
-        </div>
-        <div class="filter">
-            <app-select-box route="transaction-groups" 
-                            #groupSelect
-                            display="groupName" 
-                            value="id"
-                            name="Group"
-                            [(selectedValue)]="selectedGroupId"></app-select-box>
-        </div>
-        <div class="filter">
-            <app-select-box route="transaction-methods" 
-                            #methodSelect
-                            display="methodName" 
-                            value="id"
-                            name="Method"
-                            [(selectedValue)]="selectedMethodId"></app-select-box>
-        </div>
-        <div class="filter">
-            <app-select-box route="accounts" 
-                            #accountSelect
-                            display="accountName" 
-                            value="id"
-                            name="Account"
-                            [(selectedValue)]="selectedAccountId"></app-select-box>
+            <label>
+                Type: 
+                <app-select-box [(value)]="selectedTypeId" 
+                                #typeSelect
+                                resourceName="Type" 
+                                route="transaction-types" 
+                                displayMember="typeName" 
+                                valueMember="id">
+                </app-select-box>
+            </label>
+            <label>
+                Group: 
+                <app-select-box [(value)]="selectedGroupId" 
+                                #groupSelect
+                                resourceName="Group" 
+                                route="transaction-groups" 
+                                displayMember="groupName" 
+                                valueMember="id">
+                </app-select-box>
+            </label>
+            <label>
+                Method: 
+                <app-select-box [(value)]="selectedMethodId" 
+                                #methodSelect
+                                resourceName="Method" 
+                                route="transaction-methods" 
+                                displayMember="methodName" 
+                                valueMember="id">
+                </app-select-box>
+            </label>
+            <label>
+                Account: 
+                <app-select-box [(value)]="selectedAccountId" 
+                                #accountSelect
+                                resourceName="Account" 
+                                route="accounts" 
+                                displayMember="accountName" 
+                                valueMember="id">
+                </app-select-box>
+            </label>
         </div>
     </div>
     <table>
@@ -127,4 +137,3 @@
             }
         </tbody>
     </table>
-</div>
